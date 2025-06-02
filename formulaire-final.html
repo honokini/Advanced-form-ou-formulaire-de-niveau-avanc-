@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulaire et CSS en UN</title>
+  <style>
+    input[type="text"] {
+      padding: 12px 20px;
+      margin: 8px 0;
+      box-sizing: border-box;
+      border: 1px solid #555;
+      outline: none;
+    }
+
+    textarea:focus,
+    input[type="text"]:focus {
+      background-color: lightblue;
+    }
+
+    .erreur {
+      color: red;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+
+  <form name="F">
+    <fieldset style="background: #FFFFDD;">
+      <legend id="titre" style="background: #FFFF88;"><b>Client</b></legend>
+
+      <center>
+        <table border="0" cellspacing="0" cellpadding="5" width="100%">
+          <tr>
+            <td width="17%"><b>Civilité</b></td>
+            <td width="45%">
+              <input type="radio" name="civilite" value="Mademoiselle">Mademoiselle
+              <input type="radio" name="civilite" value="Madame" checked>Madame
+              <input type="radio" name="civilite" value="Monsieur">Monsieur
+            </td>
+            <td id="T1" width="38%">
+              <input type="text" name="display" size="15" value="">
+            </td>
+          </tr>
+
+          <tr>
+            <td><b>Nom / Prénom</b></td>
+            <td>
+              <input id="C1" type="text" name="nom" size="50" maxlength="80">
+            </td>
+            <td id="T2" class="erreur"></td>
+          </tr>
+
+          <tr>
+            <td><b>Adresse</b></td>
+            <td>
+              <textarea id="C2" name="adresse" cols="50" rows="2" wrap="physical"></textarea>
+            </td>
+            <td id="T3" class="erreur"></td>
+          </tr>
+
+          <tr>
+            <td><b>No postal / Localité</b></td>
+            <td>
+              <input id="C3" type="text" name="no_postal" size="5" maxlength="4">
+              <input id="C4" type="text" name="localite" size="20" maxlength="80" value="">
+            </td>
+            <td id="T4" class="erreur"></td>
+          </tr>
+
+          <tr>
+            <td><b>Pays</b></td>
+            <td>
+              <select id="lepays" name="pays">
+                <option>Tunisie</option>
+                <option>Algérie</option>
+                <option selected>Maroc</option>
+              </select>
+              <b> Ajouter pays</b>
+              <input id="C5" type="text" name="monpays" size="20" maxlength="80" value="Libye">
+              <button type="button" onclick="AjouterPays()">Ajouter pays</button>
+            </td>
+            <td></td>
+          </tr>
+
+          <tr>
+            <td><b>Plateforme(s)</b></td>
+            <td>
+              <input type="checkbox" name="materiel" value="Windows" checked>Windows
+              <input type="checkbox" name="materiel" value="Mac" checked>Macintosh
+              <input type="checkbox" name="materiel" value="Unix">Unix
+            </td>
+            <td></td>
+          </tr>
+
+          <tr>
+            <td><b>Application(s)</b></td>
+            <td>
+              <select name="applications" size="5" multiple>
+                <option selected>Bureautique</option>
+                <option>DAO</option>
+                <option>Statistiques</option>
+                <option>SGBD</option>
+                <option selected>Internet</option>
+              </select>
+            </td>
+            <td></td>
+          </tr>
+        </table>
+      </center>
+    </fieldset>
+
+    <center>
+      <table border="0" cellspacing="0" cellpadding="10" width="95%">
+        <tr>
+          <th>
+            <input type="button" value="  Soumettre formulaire  " onclick="afficher()">
+            <input type="button" value="  Vérification formulaire " onclick="forme()">
+            <input type="reset" value=" Effacer ">
+
+            <!--Nous avons ajouté le bouton Enregistrer-->
+            <INPUT TYPE="button" VALUE="  Enregistrer  " onclick="EnregistrerFormulaire()">
+
+            <!--Nous avons ajouté le bouton Récuperer -->
+            <input type="button" value="  Récupérer  " onclick="RecupererFormulaire()">
+
+          </th>
+        </tr>
+      </table>
+    </center>
+  </form>
+  
+
+  <!-- Partie JavaScript -->
+  <script>
+    //La fonction AjouterPays
+    function AjouterPays() {
+      const champ = document.getElementById("C5");
+      const nomPays = champ.value.trim();
+      const liste = document.getElementById("lepays");
+
+      if (nomPays === "") {
+        alert("Veuillez saisir un nom de pays.");
+        return;
+      }
+
+      let existe = false;
+      for (let i = 0; i < liste.options.length; i++) {
+        if (liste.options[i].text.toLowerCase() === nomPays.toLowerCase()) {
+          existe = true;
+          break;
+        }
+      }
+
+      if (!existe) {
+        const nouvelleOption = document.createElement("option");
+        nouvelleOption.text = nomPays;
+        liste.appendChild(nouvelleOption);
+        champ.value = "";
+      } else {
+        alert("Ce pays existe déjà dans la liste.");
+      }
+    }
+
+    function forme() {
+      let valide = true;
+
+      // Nom et prénoms
+      const nom = document.getElementById("C1");
+      const msgNom = document.getElementById("T2");
+      if (nom.value.length < 8 || nom.value.length > 20) {
+        msgNom.textContent = "Le nom/prénom doit contenir entre 8 et 20 caractères.";
+        nom.style.color = "red";
+        valide = false;
+      } else {
+        msgNom.textContent = "";
+        nom.style.color = "black";
+      }
+
+      // Adresse
+      const adresse = document.getElementById("C2");
+      const msgAdresse = document.getElementById("T3");
+      if (adresse.value.length < 20) {
+        msgAdresse.textContent = "L'adresse doit contenir au moins 20 caractères.";
+        adresse.style.color = "red";
+        valide = false;
+      } else {
+        msgAdresse.textContent = "";
+        adresse.style.color = "black";
+      }
+
+      // Code postal
+      const postal = document.getElementById("C3");
+      const localite = document.getElementById("C4");
+      const msgPostal = document.getElementById("T4");
+
+      if (postal.value === "3000") {
+        localite.value = "ville1";
+        msgPostal.textContent = "";
+        postal.style.color = "black";
+      } else if (postal.value === "4000") {
+        localite.value = "ville2";
+        msgPostal.textContent = "";
+        postal.style.color = "black";
+      } else {
+        msgPostal.textContent = "Le code postal doit être 3000 ou 4000.";
+        postal.style.color = "red";
+        localite.value = "";
+        valide = false;
+      }
+
+      return valide;
+    }
+
+
+
+    
+    //La fonction afficheralert
+    function AfficherAlert() {
+  // On vérifie d'abord si le formulaire est valide
+  if (!forme()) {
+    alert("Veuillez corriger les erreurs avant de soumettre le formulaire.");
+    return;
+  }
+
+
+
+  // Récupération des données
+  const civilites = document.getElementsByName("civilite");
+  let civiliteChoisie = "";
+  for (let c of civilites) {
+    if (c.checked) civiliteChoisie = c.value;
+  }
+
+  const nom = document.getElementById("C1").value;
+  const adresse = document.getElementById("C2").value;
+  const postal = document.getElementById("C3").value;
+  const localite = document.getElementById("C4").value;
+  const pays = document.getElementById("lepays").value;
+
+  // Plateformes cochées
+  const plateformes = document.getElementsByName("materiel");
+  let plateformesChoisies = [];
+  for (let p of plateformes) {
+    if (p.checked) plateformesChoisies.push(p.value);
+  }
+
+  // Applications sélectionnées
+  const apps = document.forms["F"]["applications"];
+  let applicationsChoisies = [];
+  for (let i = 0; i < apps.options.length; i++) {
+    if (apps.options[i].selected) {
+      applicationsChoisies.push(apps.options[i].value);
+    }
+  }
+
+  // Construction du message
+  let message = "📋 Résumé du formulaire :\n\n";
+  message += "Civilité : " + civiliteChoisie + "\n";
+  message += "Nom/Prénom : " + nom + "\n";
+  message += "Adresse : " + adresse + "\n";
+  message += "Code Postal : " + postal + "\n";
+  message += "Localité : " + localite + "\n";
+  message += "Pays : " + pays + "\n";
+  message += "Plateformes : " + plateformesChoisies.join(", ") + "\n";
+  message += "Applications : " + applicationsChoisies.join(", ") + "\n";
+
+  // Affichage de l'alerte
+  alert(message);
+}
+
+
+
+//Utilisation de l'API Local Storage - Enregistrement
+//Fonction EnregistrerFormulaire
+function EnregistrerFormulaire() {
+  if (!forme()) {
+    alert("Veuillez corriger les erreurs avant d'enregistrer.");
+    return;
+  }
+
+  const civilites = document.getElementsByName("civilite");
+  let civiliteChoisie = "";
+  for (let c of civilites) {
+    if (c.checked) civiliteChoisie = c.value;
+  }
+
+  const nom = document.getElementById("C1").value;
+  const adresse = document.getElementById("C2").value;
+  const postal = document.getElementById("C3").value;
+  const localite = document.getElementById("C4").value;
+  const pays = document.getElementById("lepays").value;
+
+  const plateformes = document.getElementsByName("materiel");
+  let plateformesChoisies = [];
+  for (let p of plateformes) {
+    if (p.checked) plateformesChoisies.push(p.value);
+  }
+
+  const apps = document.forms["F"]["applications"];
+  let applicationsChoisies = [];
+  for (let i = 0; i < apps.options.length; i++) {
+    if (apps.options[i].selected) {
+      applicationsChoisies.push(apps.options[i].value);
+    }
+  }
+
+  // Stockage dans localStorage (encodé en JSON)
+  const donneesFormulaire = {
+    civilite: civiliteChoisie,
+    nom: nom,
+    adresse: adresse,
+    postal: postal,
+    localite: localite,
+    pays: pays,
+    plateformes: plateformesChoisies,
+    applications: applicationsChoisies
+  };
+
+  localStorage.setItem("formulaire_client", JSON.stringify(donneesFormulaire));
+  alert("✅ Données enregistrées avec succès !");
+}
+
+//Ajoutons la fonction RecupererFormulaire
+function RecupererFormulaire() {
+  const data = localStorage.getItem("formulaire_client");
+
+  if (!data) {
+    alert("❌ Aucune donnée enregistrée trouvée !");
+    return;
+  }
+
+  const formulaire = JSON.parse(data);
+
+  // Remplir les champs
+  const civilites = document.getElementsByName("civilite");
+  for (let c of civilites) {
+    c.checked = (c.value === formulaire.civilite);
+  }
+
+  document.getElementById("C1").value = formulaire.nom;
+  document.getElementById("C2").value = formulaire.adresse;
+  document.getElementById("C3").value = formulaire.postal;
+  document.getElementById("C4").value = formulaire.localite;
+  document.getElementById("lepays").value = formulaire.pays;
+
+  // Plateformes (checkboxes)
+  const plateformes = document.getElementsByName("materiel");
+  for (let p of plateformes) {
+    p.checked = formulaire.plateformes.includes(p.value);
+  }
+
+  // Applications (select multiple)
+  const apps = document.forms["F"]["applications"];
+  for (let i = 0; i < apps.options.length; i++) {
+    apps.options[i].selected = formulaire.applications.includes(apps.options[i].value);
+  }
+
+  alert("📥 Données récupérées avec succès !");
+}
+
+  </script>
+
+</body>
+</html>
